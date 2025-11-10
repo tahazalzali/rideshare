@@ -50,5 +50,4 @@
   "dependencies": {
     "@nestjs/testing": "^10.4.15"
   }
-}corepack enable
-pnpm install --frozen-lockfile
+}
