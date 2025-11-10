@@ -11,12 +11,12 @@
     "node": ">=20"
   },
   "scripts": {
-    "build": "npm run build -ws",
+    "build": "pnpm -w -r build",
     "lint": "eslint . --ext .ts",
     "format": "prettier --write .",
-    "test": "npm run test -ws",
-    "test:unit": "npm run test:unit -ws",
-    "test:e2e": "npm run test:e2e -ws",
+    "test": "pnpm -w -r --filter './services/*' run test:unit",
+    "test:unit": "pnpm -w -r test:unit",
+    "test:e2e": "pnpm -w -r test:e2e",
     "dev": "pnpm run --parallel --filter './services/*' start:dev",
     "dev:api": "pnpm --filter api-gateway run start:dev",
     "dev:notification": "pnpm --filter notification-service run start:dev",
@@ -46,4 +46,9 @@
     "ts-node-dev": "^2.0.0",
     "typescript": "^5.4.5"
   }
-}
+  ,
+  "dependencies": {
+    "@nestjs/testing": "^10.4.15"
+  }
+}corepack enable
+pnpm install --frozen-lockfile
