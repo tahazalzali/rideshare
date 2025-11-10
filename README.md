@@ -119,4 +119,4 @@ services/
 
 ## License
 
-MIT (for example usage). Production use requires your own review & compliance.
+MIT. Production use requires your own review & compliance.

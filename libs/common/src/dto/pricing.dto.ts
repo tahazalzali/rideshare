@@ -11,6 +11,12 @@ export class EstimatePriceDto {
   @IsIn(['standard', 'premium', 'xl'])
   serviceLevel?: 'standard' | 'premium' | 'xl';
 }
+export class PriceBreakdownDto {
+  @ApiProperty() base!: number;
+  @ApiProperty() distanceComponent!: number;
+  @ApiProperty() durationComponent!: number;
+  @ApiProperty() minimumFare!: number;
+}
 
 export class PriceQuoteDto {
   @ApiProperty() currency!: string;
@@ -26,9 +32,3 @@ export class PriceQuoteDto {
   breakdown?: PriceBreakdownDto;
 }
 
-export class PriceBreakdownDto {
-  @ApiProperty() base!: number;
-  @ApiProperty() distanceComponent!: number;
-  @ApiProperty() durationComponent!: number;
-  @ApiProperty() minimumFare!: number;
-}

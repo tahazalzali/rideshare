@@ -19,6 +19,9 @@ export declare const PATTERNS: {
     readonly TRIP: {
         readonly BOOK: "trip.book";
         readonly GET: "trip.get";
+        readonly START: "trip.start";
+        readonly COMPLETE: "trip.complete";
+        readonly CANCEL: "trip.cancel";
     };
     readonly NOTIFICATION: {
         readonly SEND: "notification.send";
