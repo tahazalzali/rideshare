@@ -1,0 +1,31 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata: { name: pricing-service, namespace: rides }
+spec:
+  replicas: 1
+  selector: { matchLabels: { app: pricing-service } }
+  template:
+    metadata: { labels: { app: pricing-service } }
+    spec:
+      containers:
+        - name: pricing-service
+          image: ghcr.io/your-org/pricing-service:latest
+          ports: [{'containerPort': 3011}]
+          env:
+            - name: RABBITMQ_URI
+              value: amqp://rabbitmq:rabbitmq@rabbitmq.rides.svc.cluster.local:5672
+            - name: JWT_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: gateway-secrets
+                  key: jwt-secret
+---
+apiVersion: v1
+kind: Service
+metadata: { name: pricing-service, namespace: rides }
+spec:
+  selector: { app: pricing-service }
+  ports:
+    - name: http
+      port: 3011
+      targetPort: 3011

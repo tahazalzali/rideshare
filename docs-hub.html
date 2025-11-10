@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Rideshare Microservices · Documentation Hub</title>
+  <style>
+    :root {
+      --bg1: #0f172a; /* slate-900 */
+      --bg2: #111827; /* gray-900 */
+      --card: #0b1220; /* deep-blue */
+      --muted: #94a3b8; /* slate-400 */
+      --accent: #06b6d4; /* cyan-500 */
+      --accent2: #8b5cf6; /* violet-500 */
+      --ok: #10b981; /* emerald */
+      --bad: #ef4444; /* red */
+      --warn: #f59e0b; /* amber */
+      --white: #e5e7eb;
+    }
+    * { box-sizing: border-box; }
+    html, body { height: 100%; }
+    body {
+      margin: 0;
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, Noto Sans, Arial;
+      background: radial-gradient(1200px 600px at 10% 10%, rgba(139,92,246,.15), transparent 60%),
+                  radial-gradient(1200px 600px at 90% 0%, rgba(6,182,212,.12), transparent 60%),
+                  linear-gradient(180deg, var(--bg1), var(--bg2));
+      color: var(--white);
+    }
+    .container { max-width: 1200px; margin: 0 auto; padding: 40px 20px 72px; }
+    header { display:flex; align-items: center; gap: 16px; margin-bottom: 28px; }
+    header .logo {
+      width: 48px; height: 48px; border-radius: 12px;
+      background: linear-gradient(135deg, var(--accent), var(--accent2));
+      display:flex; align-items:center; justify-content:center; font-weight: 800;
+      box-shadow: 0 10px 30px rgba(139,92,246,.25), 0 8px 24px rgba(6,182,212,.15);
+    }
+    header h1 { font-size: 24px; margin: 0; letter-spacing: .2px; }
+    header .subtitle { color: var(--muted); font-size: 14px; margin-top: 2px; }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(270px, 1fr));
+      gap: 16px;
+    }
+    .card {
+      background: rgba(255,255,255,.03);
+      border: 1px solid rgba(255,255,255,.06);
+      border-radius: 16px;
+      padding: 18px;
+      backdrop-filter: blur(8px);
+      transition: transform .15s ease, border-color .15s ease;
+    }
+    .card:hover { transform: translateY(-2px); border-color: rgba(139,92,246,.4); }
+    .card h3 { margin: 6px 0 4px; font-size: 16px; letter-spacing: .3px; }
+    .meta { font-size: 12px; color: var(--muted); margin-bottom: 10px; }
+    .status { display:flex; align-items:center; gap: 8px; font-size: 13px; margin: 10px 0 14px; }
+    .dot { width:10px; height:10px; border-radius: 50%; background: var(--warn); }
+    .actions { display:flex; gap: 8px; flex-wrap: wrap; }
+    .btn {
+      appearance: none; border: 1px solid rgba(255,255,255,.16); color: var(--white);
+      background: linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.02));
+      border-radius: 12px; padding: 8px 10px; font-size: 12px; cursor: pointer; text-decoration: none;
+      transition: border-color .15s ease, background .15s ease;
+    }
+    .btn:hover { border-color: rgba(6,182,212,.5); background: rgba(6,182,212,.07); }
+    .footer {
+      display:flex; justify-content: space-between; align-items:center; margin-top: 22px; color: var(--muted); font-size: 12px;
+    }
+    .env { display:flex; gap:8px; align-items:center; }
+    .kbd { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-size: 11px; padding: 2px 6px; border-radius: 6px;
+      border:1px solid rgba(255,255,255,.1); background: rgba(255,255,255,.04); color: var(--white); }
+    .tag { font-size: 11px; color: var(--muted); border:1px solid rgba(255,255,255,.1); border-radius: 999px; padding: 3px 8px; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <div class="logo">RS</div>
+      <div>
+        <h1>Rideshare Microservices · Documentation Hub</h1>
+        <div class="subtitle">Gateway + Trip + Pricing + Passenger + Driver + Payment + Notification</div>
+      </div>
+    </header>
+
+    <div class="grid" id="services"></div>
+
+    <div class="footer">
+      <div class="env">
+        <span class="tag" id="env-tag">Environment</span>
+        <span class="kbd" id="base-url">Detecting…</span>
+      </div>
+      <div>Auto-refreshing every 30s · <span class="tag">/health</span> & <span class="tag">/docs</span> & <span class="tag">/metrics</span></div>
+    </div>
+  </div>
+
+  <script>
+    const services = [
+      { key:'api',         name:'API Gateway',         port:3000, docs:'/docs', health:'/health', metrics:'/metrics' },
+      { key:'trip',        name:'Trip Service',        port:3001, docs:'/docs', health:'/health', metrics:'/metrics' },
+      { key:'passenger',   name:'Passenger Service',   port:3002, docs:'/docs', health:'/health', metrics:'/metrics' },
+      { key:'driver',      name:'Driver Service',      port:3003, docs:'/docs', health:'/health', metrics:'/metrics' },
+      { key:'payment',     name:'Payment Service',     port:3004, docs:'/docs', health:'/health', metrics:'/metrics' },
+      { key:'notification',name:'Notification Service',port:3005, docs:'/docs', health:'/health', metrics:'/metrics' },
+      { key:'pricing',     name:'Pricing Service',     port:3011, docs:'/docs', health:'/health', metrics:'/metrics' },
+    ];
+
+    // Base host detection (supports localhost or current host)
+    const guessedHost = window.location.hostname || 'localhost';
+    const base = `http://${guessedHost}`;
+    document.getElementById('base-url').textContent = base;
+
+    function h(el, attrs, children) {
+      const e = document.createElement(el);
+      if (attrs) Object.entries(attrs).forEach(([k,v]) => e.setAttribute(k, v));
+      (children||[]).forEach(c => e.appendChild(typeof c === 'string' ? document.createTextNode(c) : c));
+      return e;
+    }
+
+    async function check(url) {
+      try {
+        const res = await fetch(url, { method:'GET' });
+        if (!res.ok) throw new Error('bad status');
+        return await res.json().catch(()=>({ ok:true }));
+      } catch (e) {
+        return null;
+      }
+    }
+
+    async function render() {
+      const grid = document.getElementById('services');
+      grid.innerHTML = '';
+      for (const s of services) {
+        const healthUrl = `${base}:${s.port}${s.health}`;
+        const docsUrl   = `${base}:${s.port}${s.docs}`;
+        const metricsUrl= `${base}:${s.port}${s.metrics}`;
+        const data = await check(healthUrl);
+        const ok = !!data;
+        const dot = h('span', { class:'dot', style:`background:${ok ? 'var(--ok)' : 'var(--bad)'};` }, []);
+        const title = h('h3', null, [s.name]);
+        const meta = h('div', { class:'meta' }, [`:${s.port} · ${ok ? 'Healthy' : 'Unreachable'}`]);
+
+        const docsBtn = h('a', { class:'btn', href:docsUrl, target:'_blank', rel:'noreferrer' }, ['Open Swagger']);
+        const healthBtn = h('a', { class:'btn', href:healthUrl, target:'_blank', rel:'noreferrer' }, ['Health']);
+        const metricsBtn = h('a', { class:'btn', href:metricsUrl, target:'_blank', rel:'noreferrer' }, ['Metrics']);
+
+        const card = h('div', { class:'card' }, [
+          h('div', { class:'status' }, [dot, document.createTextNode(ok ? 'Service is healthy' : 'No response')]),
+          title,
+          meta,
+          h('div', { class:'actions' }, [docsBtn, healthBtn, metricsBtn]),
+        ]);
+        grid.appendChild(card);
+      }
+    }
+
+    render();
+    setInterval(render, 30000);
+  </script>
+</body>
+</html>

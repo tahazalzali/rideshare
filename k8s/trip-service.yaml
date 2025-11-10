@@ -1,0 +1,31 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata: { name: trip-service, namespace: rides }
+spec:
+  replicas: 1
+  selector: { matchLabels: { app: trip-service } }
+  template:
+    metadata: { labels: { app: trip-service } }
+    spec:
+      containers:
+        - name: trip-service
+          image: ghcr.io/your-org/trip-service:latest
+          ports: []
+          env:
+            - name: RABBITMQ_URI
+              value: amqp://rabbitmq:rabbitmq@rabbitmq.rides.svc.cluster.local:5672
+            - name: JWT_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: gateway-secrets
+                  key: jwt-secret
+---
+apiVersion: v1
+kind: Service
+metadata: { name: trip-service, namespace: rides }
+spec:
+  selector: { app: trip-service }
+  ports:
+    - name: http
+      port: 80
+      targetPort: 3000

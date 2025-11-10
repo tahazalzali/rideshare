@@ -1,0 +1,131 @@
+version: '3.9'
+services:
+  rabbitmq:
+    image: rabbitmq:3.13-management
+    container_name: rabbitmq
+    ports: [ "5672:5672", "15672:15672" ]
+    environment:
+      RABBITMQ_DEFAULT_USER: rabbitmq
+      RABBITMQ_DEFAULT_PASS: rabbitmq
+
+  # Postgres per service (isolation of persistence per microservice)
+  postgres-passenger:
+    image: postgres:16
+    environment:
+      POSTGRES_PASSWORD: passenger
+      POSTGRES_USER: passenger
+      POSTGRES_DB: passenger
+    ports: [ "5433:5432" ]
+  postgres-driver:
+    image: postgres:16
+    environment:
+      POSTGRES_PASSWORD: driver
+      POSTGRES_USER: driver
+      POSTGRES_DB: driver
+    ports: [ "5434:5432" ]
+  postgres-trip:
+    image: postgres:16
+    environment:
+      POSTGRES_PASSWORD: trip
+      POSTGRES_USER: trip
+      POSTGRES_DB: trip
+    ports: [ "5435:5432" ]
+  postgres-payment:
+    image: postgres:16
+    environment:
+      POSTGRES_PASSWORD: payment
+      POSTGRES_USER: payment
+      POSTGRES_DB: payment
+    ports: [ "5436:5432" ]
+
+  api-gateway:
+    build:
+      context: .
+      dockerfile: services/api-gateway/Dockerfile
+    depends_on: [ rabbitmq ]
+    environment:
+      PORT: 3000
+      JWT_SECRET: 'localdevsecret'
+      RABBITMQ_URI: 'amqp://rabbitmq:rabbitmq@rabbitmq:5672'
+      QUEUE_TRIP: 'trip_queue'
+      QUEUE_PRICING: 'pricing_queue'
+    ports: [ "3000:3000" ]
+
+  passenger-service:
+    build:
+      context: .
+      dockerfile: services/passenger-service/Dockerfile
+    depends_on: [ rabbitmq, postgres-passenger ]
+    environment:
+      RABBITMQ_URI: 'amqp://rabbitmq:rabbitmq@rabbitmq:5672'
+      QUEUE_PASSENGER: 'passenger_queue'
+      DB_HOST: 'postgres-passenger'
+      DB_PORT: '5432'
+      DB_USER: 'passenger'
+      DB_PASS: 'passenger'
+      DB_NAME: 'passenger'
+
+  driver-service:
+    build:
+      context: .
+      dockerfile: services/driver-service/Dockerfile
+    depends_on: [ rabbitmq, postgres-driver ]
+    environment:
+      RABBITMQ_URI: 'amqp://rabbitmq:rabbitmq@rabbitmq:5672'
+      QUEUE_DRIVER: 'driver_queue'
+      DB_HOST: 'postgres-driver'
+      DB_PORT: '5432'
+      DB_USER: 'driver'
+      DB_PASS: 'driver'
+      DB_NAME: 'driver'
+
+  pricing-service:
+    build:
+      context: .
+      dockerfile: services/pricing-service/Dockerfile
+    depends_on: [ rabbitmq ]
+    environment:
+      PORT: 3011
+      RABBITMQ_URI: 'amqp://rabbitmq:rabbitmq@rabbitmq:5672'
+      QUEUE_PRICING: 'pricing_queue'
+    ports: [ "3011:3011" ]
+
+  payment-service:
+    build:
+      context: .
+      dockerfile: services/payment-service/Dockerfile
+    depends_on: [ rabbitmq, postgres-payment ]
+    environment:
+      RABBITMQ_URI: 'amqp://rabbitmq:rabbitmq@rabbitmq:5672'
+      QUEUE_PAYMENT: 'payment_queue'
+      DB_HOST: 'postgres-payment'
+      DB_PORT: '5432'
+      DB_USER: 'payment'
+      DB_PASS: 'payment'
+      DB_NAME: 'payment'
+
+  trip-service:
+    build:
+      context: .
+      dockerfile: services/trip-service/Dockerfile
+    depends_on: [ rabbitmq, postgres-trip, driver-service, pricing-service, payment-service ]
+    environment:
+      RABBITMQ_URI: 'amqp://rabbitmq:rabbitmq@rabbitmq:5672'
+      QUEUE_TRIP: 'trip_queue'
+      QUEUE_PRICING: 'pricing_queue'
+      QUEUE_PAYMENT: 'payment_queue'
+      QUEUE_DRIVER: 'driver_queue'
+      DB_HOST: 'postgres-trip'
+      DB_PORT: '5432'
+      DB_USER: 'trip'
+      DB_PASS: 'trip'
+      DB_NAME: 'trip'
+
+  notification-service:
+    build:
+      context: .
+      dockerfile: services/notification-service/Dockerfile
+    depends_on: [ rabbitmq ]
+    environment:
+      RABBITMQ_URI: 'amqp://rabbitmq:rabbitmq@rabbitmq:5672'
+      QUEUE_NOTIFICATION: 'notification_queue'

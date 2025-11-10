@@ -1,0 +1,8 @@
+{
+  "watch": ["src", "../libs/common/src"],
+  "ignore": ["**/*.spec.ts", "**/*.test.ts", "node_modules"],
+  "exec": "ts-node",
+  "ext": "ts",
+  "clear": false,
+  "notify": false
+}

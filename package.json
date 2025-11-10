@@ -1,0 +1,49 @@
+{
+  "name": "nest-rideshare",
+  "private": true,
+  "version": "1.0.0",
+  "workspaces": [
+    "libs/*",
+    "services/*"
+  ],
+  "packageManager": "pnpm@10.20.0",
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "build": "npm run build -ws",
+    "lint": "eslint . --ext .ts",
+    "format": "prettier --write .",
+    "test": "npm run test -ws",
+    "test:unit": "npm run test:unit -ws",
+    "test:e2e": "npm run test:e2e -ws",
+    "dev": "pnpm run --parallel --filter './services/*' start:dev",
+    "dev:api": "pnpm --filter api-gateway run start:dev",
+    "dev:notification": "pnpm --filter notification-service run start:dev",
+    "dev:passenger": "pnpm --filter passenger-service run start:dev",
+    "dev:driver": "pnpm --filter driver-service run start:dev",
+    "dev:trip": "pnpm --filter trip-service run start:dev",
+    "dev:payment": "pnpm --filter payment-service run start:dev",
+    "dev:pricing": "pnpm --filter pricing-service run start:dev",
+    "infra:up": "docker-compose up -d rabbitmq postgres-passenger postgres-driver postgres-trip postgres-payment",
+    "infra:down": "docker-compose down",
+    "infra:logs": "docker-compose logs -f",
+    "start:all": "pnpm run infra:up && sleep 3 && pnpm run dev",
+    "docs": "open docs-hub.html || xdg-open docs-hub.html || start docs-hub.html"
+  },
+  "devDependencies": {
+    "@types/jest": "^29.5.12",
+    "@types/node": "^20.11.30",
+    "@typescript-eslint/eslint-plugin": "^7.7.1",
+    "@typescript-eslint/parser": "^7.7.1",
+    "eslint": "^9.10.0",
+    "eslint-config-prettier": "^9.1.0",
+    "eslint-plugin-import": "^2.29.1",
+    "jest": "^29.7.0",
+    "prettier": "^3.3.3",
+    "ts-jest": "^29.2.5",
+    "ts-node": "^10.9.2",
+    "ts-node-dev": "^2.0.0",
+    "typescript": "^5.4.5"
+  }
+}
