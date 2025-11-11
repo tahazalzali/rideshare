@@ -1,6 +1,6 @@
 import { Body, Controller, Get, Inject, NotFoundException, Param, Post, Query, UseGuards } from '@nestjs/common';
 import { ClientProxy } from '@nestjs/microservices';
-import { ApiBearerAuth, ApiTags, ApiOperation, ApiResponse, ApiQuery, ApiProperty } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiTags, ApiOperation, ApiResponse, ApiQuery, ApiProperty, ApiBody } from '@nestjs/swagger';
 import { AuthGuard } from '@nestjs/passport';
 import { PATTERNS, Roles } from '@rides/common';
 import { RolesGuard } from '@rides/common';
@@ -19,6 +19,23 @@ class CreatePassengerDto {
   email!: string;
 }
 
+const PASSENGER_EXAMPLE = {
+  id: 'passenger_01J89YXW',
+  name: 'Alice Example',
+  email: 'alice@example.com',
+  createdAt: '2024-05-01T10:30:00.000Z',
+};
+
+const PASSENGER_LIST_EXAMPLE = [
+  PASSENGER_EXAMPLE,
+  {
+    id: 'passenger_01J89ZAB',
+    name: 'Bob Rider',
+    email: 'bob.rider@example.com',
+    createdAt: '2024-05-02T11:15:00.000Z',
+  },
+];
+
 @ApiTags('passengers')
 @ApiBearerAuth()
 @UseGuards(AuthGuard('jwt'), RolesGuard)
@@ -28,7 +45,8 @@ export class PassengerController {
 
   @Post()
   @ApiOperation({ summary: 'Create a passenger profile' })
-  @ApiResponse({ status: 201, description: 'Passenger created' })
+  @ApiBody({ type: CreatePassengerDto, schema: { example: { name: 'Alice Example', email: 'alice@example.com' } } })
+  @ApiResponse({ status: 201, description: 'Passenger created', schema: { example: PASSENGER_EXAMPLE } })
   @Roles('Admin')
   async create(@Body() dto: CreatePassengerDto) {
     const result$ = this.passengers.send(PATTERNS.PASSENGER.CREATE, dto).pipe(timeout(5000));
@@ -37,8 +55,8 @@ export class PassengerController {
 
   @Get()
   @ApiOperation({ summary: 'List passengers (admin only)' })
-  @ApiResponse({ status: 200, description: 'Passenger list' })
-  @ApiQuery({ name: 'search', required: false, description: 'Filter by name/email' })
+  @ApiResponse({ status: 200, description: 'Passenger list', schema: { example: PASSENGER_LIST_EXAMPLE } })
+  @ApiQuery({ name: 'search', required: false, description: 'Filter by name/email', example: 'alice' })
   @Roles('Admin')
   async list(@Query('search') search?: string) {
     const payload = search?.trim() ? { search } : {};
@@ -48,7 +66,7 @@ export class PassengerController {
 
   @Get(':id')
   @ApiOperation({ summary: 'Fetch passenger by id' })
-  @ApiResponse({ status: 200, description: 'Passenger found' })
+  @ApiResponse({ status: 200, description: 'Passenger found', schema: { example: PASSENGER_EXAMPLE } })
   @ApiResponse({ status: 404, description: 'Passenger not found' })
   @Roles('Passenger', 'Driver', 'Admin')
   async get(@Param('id') id: string) {

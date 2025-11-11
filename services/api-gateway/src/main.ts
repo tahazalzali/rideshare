@@ -4,7 +4,7 @@ import { AppModule } from './app.module';
 import { ValidationPipe, VersioningType } from '@nestjs/common';
 import helmet from 'helmet';
 import { LoggingInterceptor, metricsHandler, metricsMiddleware, correlationIdMiddleware } from '@rides/common';
-import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
+import { SwaggerModule, DocumentBuilder, SwaggerCustomOptions } from '@nestjs/swagger';
 import { initTracing } from '@rides/common';
 
 async function bootstrap() {
@@ -43,7 +43,13 @@ async function bootstrap() {
     .addBearerAuth()
     .build();
   const document = SwaggerModule.createDocument(app, config);
-  SwaggerModule.setup('/docs', app, document);
+  const swaggerOptions: SwaggerCustomOptions = {
+    swaggerOptions: {
+      tagsSorter: 'alpha',
+      operationsSorter: 'alpha',
+    },
+  };
+  SwaggerModule.setup('/docs', app, document, swaggerOptions);
 
   await app.listen(process.env.PORT ? Number(process.env.PORT) : 3000);
 }

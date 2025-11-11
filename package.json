@@ -17,7 +17,7 @@
     "test": "pnpm -w -r --filter './services/*' run test:unit",
     "test:unit": "pnpm -w -r test:unit",
     "test:e2e": "pnpm -w -r test:e2e",
-    "dev": "pnpm run --parallel --filter './services/*' start:dev",
+    "dev": "pnpm run infra:up && pnpm run --parallel --filter './services/*' start:dev",
     "dev:api": "pnpm --filter api-gateway run start:dev",
     "dev:notification": "pnpm --filter notification-service run start:dev",
     "dev:passenger": "pnpm --filter passenger-service run start:dev",
