@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, ConflictException } from '@nestjs/common';
 import { createHash } from 'crypto';
 
 export interface User {
@@ -18,9 +18,13 @@ export class UsersService {
   }
 
   async register(email: string, password: string, roles: string[]) {
+    const normalizedEmail = email.trim().toLowerCase();
+    if (await this.findByEmail(normalizedEmail)) {
+      throw new ConflictException(`User ${normalizedEmail} already exists`);
+    }
     const user: User = { 
       id: this.idCounter++, 
-      email, 
+      email: normalizedEmail, 
       passwordHash: this.hash(password), 
       roles 
     };
@@ -29,7 +33,8 @@ export class UsersService {
   }
 
   async findByEmail(email: string) {
-    return this.users.find(u => u.email === email);
+    const normalizedEmail = email.trim().toLowerCase();
+    return this.users.find(u => u.email === normalizedEmail);
   }
 
   async validate(email: string, password: string) {
