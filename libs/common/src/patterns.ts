@@ -7,6 +7,7 @@ export const PATTERNS = {
   DRIVER: {
     FIND_AVAILABLE: 'driver.findAvailable',
     ASSIGN: 'driver.assign',
+    CREATE: 'driver.create',
   },
   PRICING: {
     ESTIMATE: 'pricing.estimate',

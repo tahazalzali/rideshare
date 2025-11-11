@@ -20,4 +20,11 @@ export class DriverMessageController {
     this.rmq.ack(ctx);
     return { ok: true };
   }
+
+  @MessagePattern(PATTERNS.DRIVER.CREATE)
+  async create(@Payload() payload: { name: string; lat: number; lng: number }, @Ctx() ctx: RmqContext) {
+    const driver = await this.drivers.create(payload);
+    this.rmq.ack(ctx);
+    return driver;
+  }
 }

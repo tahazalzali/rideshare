@@ -60,7 +60,7 @@ export class AuthController {
   @ApiOperation({ summary: 'Create a demo user (in-memory)' })
   @ApiBody({
     type: RegisterDto,
-    schema: { example: { email: 'alice@example.com', password: 'supersafe', roles: ['Passenger'] } },
+    schema: { example: { email: 'alice@example.com', password: 'supersafe', roles: ['Passenger','Admin'] } },
   })
   @ApiResponse({ status: 201, description: 'User created', schema: { example: AUTH_USER_EXAMPLE } })
   register(@Body() dto: RegisterDto) {

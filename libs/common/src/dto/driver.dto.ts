@@ -9,3 +9,17 @@ export class FindDriverDto {
 export class AssignDriverDto {
   @ApiProperty() @IsString() driverId!: string;
 }
+
+export class CreateDriverDto {
+  @ApiProperty({ example: 'Jane Doe' })
+  @IsString()
+  name!: string;
+
+  @ApiProperty({ example: 37.7749 })
+  @IsNumber()
+  lat!: number;
+
+  @ApiProperty({ example: -122.4194 })
+  @IsNumber()
+  lng!: number;
+}

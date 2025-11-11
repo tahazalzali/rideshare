@@ -1,5 +1,5 @@
 import { Controller, Get, Query, Inject, UseGuards } from '@nestjs/common';
-import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth } from '@nestjs/swagger';
+import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth, ApiQuery } from '@nestjs/swagger';
 import { ClientProxy } from '@nestjs/microservices';
 import { EstimatePriceDto, PriceQuoteDto, PATTERNS, Roles } from '@rides/common';
 import { lastValueFrom, timeout } from 'rxjs';
@@ -30,6 +30,11 @@ export class PricingHttpController {
 
   @Get('estimate')
   @ApiOperation({ summary: 'Estimate ride price based on pickup and dropoff coordinates' })
+  @ApiQuery({ name: 'pickupLat', type: Number, example: 37.7749 })
+  @ApiQuery({ name: 'pickupLng', type: Number, example: -122.4194 })
+  @ApiQuery({ name: 'dropoffLat', type: Number, example: 37.7841 })
+  @ApiQuery({ name: 'dropoffLng', type: Number, example: -122.4094 })
+  @ApiQuery({ name: 'serviceLevel', required: false, examples: { standard: { value: 'standard' } } })
   @ApiResponse({ status: 200, description: 'Price estimate', type: PriceQuoteDto, schema: { example: PRICE_QUOTE_EXAMPLE } })
   @Roles('Passenger', 'Driver', 'Admin')
   async estimate(@Query() dto: EstimatePriceDto): Promise<PriceQuoteDto> {

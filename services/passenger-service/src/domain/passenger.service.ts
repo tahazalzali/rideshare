@@ -7,10 +7,14 @@ import { Passenger } from './passenger.entity';
 export class PassengerService {
   constructor(@InjectRepository(Passenger) private readonly repo: Repository<Passenger>) {}
 
-  create(data: { name: string; email: string }) {
+  async create(data: { name: string; email: string }) {
+    const email = data.email.trim().toLowerCase();
+    const existing = await this.repo.findOne({ where: { email } });
+    if (existing) return existing;
+
     const p = this.repo.create({
       name: data.name.trim(),
-      email: data.email.trim().toLowerCase(),
+      email,
     });
     return this.repo.save(p);
   }

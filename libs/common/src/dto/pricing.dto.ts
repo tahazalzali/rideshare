@@ -2,11 +2,23 @@ import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { IsNumber, IsOptional, IsIn } from 'class-validator';
 
 export class EstimatePriceDto {
-  @ApiProperty() @IsNumber() pickupLat!: number;
-  @ApiProperty() @IsNumber() pickupLng!: number;
-  @ApiProperty() @IsNumber() dropoffLat!: number;
-  @ApiProperty() @IsNumber() dropoffLng!: number;
-  @ApiPropertyOptional({ enum: ['standard', 'premium', 'xl'] })
+  @ApiProperty({ example: 37.7749 })
+  @IsNumber()
+  pickupLat!: number;
+
+  @ApiProperty({ example: -122.4194 })
+  @IsNumber()
+  pickupLng!: number;
+
+  @ApiProperty({ example: 37.7841 })
+  @IsNumber()
+  dropoffLat!: number;
+
+  @ApiProperty({ example: -122.4094 })
+  @IsNumber()
+  dropoffLng!: number;
+
+  @ApiPropertyOptional({ enum: ['standard', 'premium', 'xl'], example: 'standard' })
   @IsOptional()
   @IsIn(['standard', 'premium', 'xl'])
   serviceLevel?: 'standard' | 'premium' | 'xl';
@@ -31,4 +43,3 @@ export class PriceQuoteDto {
   })
   breakdown?: PriceBreakdownDto;
 }
-

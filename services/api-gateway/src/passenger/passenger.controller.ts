@@ -20,7 +20,7 @@ class CreatePassengerDto {
 }
 
 const PASSENGER_EXAMPLE = {
-  id: 'passenger_01J89YXW',
+  id: 'a4c6f9d8-3bcb-4c6a-bc9a-6d590d123456',
   name: 'Alice Example',
   email: 'alice@example.com',
   createdAt: '2024-05-01T10:30:00.000Z',
@@ -29,7 +29,7 @@ const PASSENGER_EXAMPLE = {
 const PASSENGER_LIST_EXAMPLE = [
   PASSENGER_EXAMPLE,
   {
-    id: 'passenger_01J89ZAB',
+    id: 'b6d8e2aa-9c4f-4fb3-8b3e-2c8bf9ea1111',
     name: 'Bob Rider',
     email: 'bob.rider@example.com',
     createdAt: '2024-05-02T11:15:00.000Z',
