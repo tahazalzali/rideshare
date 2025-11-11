@@ -15,6 +15,8 @@ services:
       POSTGRES_USER: passenger
       POSTGRES_DB: passenger
     ports: [ "5433:5432" ]
+    volumes:
+      - pg-passenger-data:/var/lib/postgresql/data
   postgres-driver:
     image: postgres:16
     environment:
@@ -22,6 +24,8 @@ services:
       POSTGRES_USER: driver
       POSTGRES_DB: driver
     ports: [ "5434:5432" ]
+    volumes:
+      - pg-driver-data:/var/lib/postgresql/data
   postgres-trip:
     image: postgres:16
     environment:
@@ -29,6 +33,8 @@ services:
       POSTGRES_USER: trip
       POSTGRES_DB: trip
     ports: [ "5435:5432" ]
+    volumes:
+      - pg-trip-data:/var/lib/postgresql/data
   postgres-payment:
     image: postgres:16
     environment:
@@ -36,6 +42,8 @@ services:
       POSTGRES_USER: payment
       POSTGRES_DB: payment
     ports: [ "5436:5432" ]
+    volumes:
+      - pg-payment-data:/var/lib/postgresql/data
 
   api-gateway:
     build:
@@ -128,3 +136,9 @@ services:
     environment:
       RABBITMQ_URI: 'amqp://rabbitmq:rabbitmq@rabbitmq:5672'
       QUEUE_NOTIFICATION: 'notification_queue'
+
+volumes:
+  pg-passenger-data:
+  pg-driver-data:
+  pg-trip-data:
+  pg-payment-data:

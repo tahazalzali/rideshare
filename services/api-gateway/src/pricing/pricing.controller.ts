@@ -34,7 +34,6 @@ export class PricingHttpController {
   @ApiQuery({ name: 'pickupLng', type: Number, example: -122.4194 })
   @ApiQuery({ name: 'dropoffLat', type: Number, example: 37.7841 })
   @ApiQuery({ name: 'dropoffLng', type: Number, example: -122.4094 })
-  @ApiQuery({ name: 'serviceLevel', required: false, examples: { standard: { value: 'standard' } } })
   @ApiResponse({ status: 200, description: 'Price estimate', type: PriceQuoteDto, schema: { example: PRICE_QUOTE_EXAMPLE } })
   @Roles('Passenger', 'Driver', 'Admin')
   async estimate(@Query() dto: EstimatePriceDto): Promise<PriceQuoteDto> {
