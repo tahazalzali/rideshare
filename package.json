@@ -25,7 +25,7 @@
     "dev:trip": "pnpm --filter trip-service run start:dev",
     "dev:payment": "pnpm --filter payment-service run start:dev",
     "dev:pricing": "pnpm --filter pricing-service run start:dev",
-    "infra:up": "docker-compose up -d rabbitmq postgres-passenger postgres-driver postgres-trip postgres-payment",
+    "infra:up": "docker-compose up -d rabbitmq postgres-passenger postgres-driver postgres-trip postgres-payment pgadmin",
     "infra:down": "docker-compose down",
     "infra:logs": "docker-compose logs -f",
     "start:all": "pnpm run infra:up && sleep 3 && pnpm run dev",
